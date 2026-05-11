@@ -25,7 +25,7 @@ URL=https://www.aapanel.com/script/install_panel_en.sh && if [ -f /usr/bin/curl 
 
 ### 4. 宝塔基础设置
 1. 网站 → 安装Nginx（安装了半个世纪）
-2. 安全 → 放行端口：43999
+2. 安全 → 放行所有端口
 3. 网站 → 添加站点（可以非备案域名解析到IX IP）
 4. 给站点申请SSL，开启**强制HTTPS**
 
