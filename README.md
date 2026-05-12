@@ -127,7 +127,7 @@ server
    - 备案域名解析到ESA提供的CNAME地址
 4. SSL/TLS → 边缘证书：
    - 申请免费证书
-   - 开启强制HTTPS缓存
+   - 开启强制HTTPS
    - TLS 加密套件与协议版本 TLSv1.2 TLSv1.3
 5. 缓存：
    - 配置 → 
