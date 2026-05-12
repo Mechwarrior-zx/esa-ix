@@ -40,7 +40,8 @@ URL=https://www.aapanel.com/script/install_panel_en.sh && if [ -f /usr/bin/curl 
 4. 站点设置 → SSL → 申请免费Let’s Encrypt证书，**开启强制HTTPS**
 
 ### 5. Nginx 配置
-进入宝塔站点 → 配置文件，**对应修改 不要复制粘贴**：
+进入宝塔站点 → 配置文件，**对应修改 不要复制粘贴**
+设置没有问题的 只需要添加：核心配置：VLESS 反向代理
 ```nginx
 server
 {
