@@ -189,7 +189,7 @@ xhttp使用：
 - 地址：**ESA 备案域名**
 - 端口：`443`
 - 协议：VLESS
-- 传输：**gRPC**
+- 传输：**gRPC**（xhttp）
 - ServiceName：`Download`
 - 安全：TLS
 - 跳过证书验证：**开启true**
