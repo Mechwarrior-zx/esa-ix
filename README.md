@@ -1,7 +1,7 @@
 # 阿里云ESA-IX
 # 单入口N用户对接N个落地
 ## 一、整体架构
-**ESA边缘入口（443端口）→ 宝塔Nginx反向代理gRPC（xhttp） → 3x-ui入站 → 自定义路由分流 → 多个独立落地节点**
+**ESA边缘入口（443端口）→ 宝塔Nginx反向代理xhttp → 3x-ui入站 → 自定义路由分流 → 多个独立落地节点**
 全程**宝塔面板 + 3x-ui面板**可视化操作，支持**单域名单443端口、多用户、多落地独立分流**
 
 ---
@@ -14,12 +14,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.
 ```
 安装完记住面板端口、账号密码
 
-### 2. 3x-ui 创建 VLESS-gRPC（xhttp） 入站节点
+### 2. 3x-ui 创建 VLESS-xhttp 入站节点
 1. 登录3x-ui → 入站列表 → 新建入站
 2. 参数按下面填：
    - 协议：**VLESS**
    - 监听端口：**43999**
-   - 传输方式：**gRPC**（xhttp）
+   - 传输方式：**xhttp**
    - Service Name：`Download`
    - **关闭TLS、不配置证书、不开启加密**
    - 其余保持默认，直接保存
@@ -72,9 +72,11 @@ server
     # 核心配置：VLESS 反向代理
     # ----------------------------------------------------------------
    location /Download { # 此路径必须与 3X-UI 中填写的 serviceName 完全一致
-        grpc_pass grpc://127.0.0.1:43999; # 转发到 3X-UI 监听的本地端口
-        grpc_set_header Host $host;
-        # ... 其他可选 headers
+        proxy_pass http://127.0.0.1:43999; # 转发到 3X-UI 监听的本地端口
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        gproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
     # ----------------------------------------------------------------
 
@@ -102,19 +104,7 @@ server
     access_log  /www/wwwlogs/你的域名.log;
     error_log  /www/wwwlogs/你的域名.error.log;
 ```
-xhttp使用：
-```
-    # ----------------------------------------------------------------
-    # 核心配置：VLESS 反向代理
-    # ----------------------------------------------------------------
-   location /Download { # 此路径必须与 3X-UI 中填写的 serviceName 完全一致
-        proxy_pass http://127.0.0.1:43999; # 转发到 3X-UI 监听的本地端口
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        gproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-```
+
 改完**重载Nginx**
 
 ### 6. 伪装静态网页部署
@@ -153,7 +143,7 @@ xhttp使用：
    - 缓存资格：**绕过缓存**
 7. 速度和网络 → 优化：
    - 速度优化：全部开关打开
-   - 网络优化：开启IPv6、关闭WebSocket、开启gRPC（xhttp可关闭）
+   - 网络优化：开启IPv6
    - 最大上传大小：改为 **500M**
 8. 流量 → 智能路由：**直接关闭**
 9. 其余默认不动，保存配置等待生效
@@ -189,7 +179,7 @@ xhttp使用：
 - 地址：**ESA 备案域名**
 - 端口：`443`
 - 协议：VLESS
-- 传输：**gRPC**（xhttp）
+- 传输：**xhttp**
 - ServiceName：`Download`
 - 安全：TLS
 - 跳过证书验证：**开启true**
