@@ -104,13 +104,16 @@ server
 ```
 xhttp使用：
 ```
-location /Download { 
-        proxy_pass http://127.0.0.1:43999;
+    # ----------------------------------------------------------------
+    # 核心配置：VLESS 反向代理
+    # ----------------------------------------------------------------
+   location /Download { # 此路径必须与 3X-UI 中填写的 serviceName 完全一致
+        proxy_pass http://127.0.0.1:43999; # 转发到 3X-UI 监听的本地端口
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-}
+        gproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
 ```
 改完**重载Nginx**
 
