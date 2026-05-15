@@ -1,7 +1,7 @@
 # 阿里云ESA-IX
 # 单入口N用户对接N个落地
 ## 一、整体架构
-**ESA边缘入口（443端口）→ 宝塔Nginx反向代理gRPC → 3x-ui入站 → 自定义路由分流 → 多个独立落地节点**
+**ESA边缘入口（443端口）→ 宝塔Nginx反向代理gRPC（xhttp） → 3x-ui入站 → 自定义路由分流 → 多个独立落地节点**
 全程**宝塔面板 + 3x-ui面板**可视化操作，支持**单域名单443端口、多用户、多落地独立分流**
 
 ---
@@ -14,12 +14,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.
 ```
 安装完记住面板端口、账号密码
 
-### 2. 3x-ui 创建 VLESS-gRPC 入站节点
+### 2. 3x-ui 创建 VLESS-gRPC（xhttp） 入站节点
 1. 登录3x-ui → 入站列表 → 新建入站
 2. 参数按下面填：
    - 协议：**VLESS**
    - 监听端口：**43999**
-   - 传输方式：**gRPC**
+   - 传输方式：**gRPC**（xhttp）
    - Service Name：`Download`
    - **关闭TLS、不配置证书、不开启加密**
    - 其余保持默认，直接保存
@@ -103,6 +103,7 @@ server
     error_log  /www/wwwlogs/你的域名.error.log;
 ```
 xhttp使用：
+```
 location /Download { 
         proxy_pass http://127.0.0.1:43999;
         proxy_http_version 1.1;
@@ -110,7 +111,7 @@ location /Download {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
-
+```
 改完**重载Nginx**
 
 ### 6. 伪装静态网页部署
