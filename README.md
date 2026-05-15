@@ -41,6 +41,18 @@ URL=https://www.aapanel.com/script/install_panel_en.sh && if [ -f /usr/bin/curl 
 
 ### 5. Nginx 配置
 进入宝塔站点 → 配置文件 **添加核心配置：VLESS 反向代理**
+**复制粘贴到你的配置合适的位置**
+```
+   location /Download { # 此路径必须与 3X-UI 中填写的 serviceName 完全一致
+        proxy_pass http://127.0.0.1:43999; # 转发到 3X-UI 监听的本地端口
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        gproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+```
+**以下是配置好的示例：（呆子，不要复制粘贴！）**
+
 ```nginx
 server
 {
@@ -69,7 +81,7 @@ server
     }
 
     # ----------------------------------------------------------------
-    # 核心配置：VLESS 反向代理
+    # 核心配置：VLESS 反向代理：
     # ----------------------------------------------------------------
    location /Download { # 此路径必须与 3X-UI 中填写的 serviceName 完全一致
         proxy_pass http://127.0.0.1:43999; # 转发到 3X-UI 监听的本地端口
@@ -79,8 +91,9 @@ server
         gproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
     # ----------------------------------------------------------------
+    # 核心配置结束
+    # ----------------------------------------------------------------
 
-    # 以下保持你原有的安全与静态资源配置
     include /www/server/panel/vhost/nginx/well-known/你的域名.conf;
     
     location ~ \.well-known{
