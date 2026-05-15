@@ -102,6 +102,15 @@ server
     access_log  /www/wwwlogs/你的域名.log;
     error_log  /www/wwwlogs/你的域名.error.log;
 ```
+xhttp使用：
+location /Download { 
+        proxy_pass http://127.0.0.1:43999;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
 改完**重载Nginx**
 
 ### 6. 伪装静态网页部署
@@ -140,7 +149,7 @@ server
    - 缓存资格：**绕过缓存**
 7. 速度和网络 → 优化：
    - 速度优化：全部开关打开
-   - 网络优化：开启IPv6、关闭WebSocket、开启gRPC
+   - 网络优化：开启IPv6、关闭WebSocket、开启gRPC（xhttp可关闭）
    - 最大上传大小：改为 **500M**
 8. 流量 → 智能路由：**直接关闭**
 9. 其余默认不动，保存配置等待生效
